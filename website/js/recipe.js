@@ -1,5 +1,8 @@
 // Agency Theme JavaScript
 
+var geocoder;
+var map;
+
 (function($) {
     "use strict"; // Start of use strict
 
@@ -34,22 +37,38 @@
     
 })(jQuery); // End of use strict
 
+
 function initMap() {
-        var uluru = {lat: -25.363, lng: 131.044};
-        var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 4,
-          center: uluru
-        });
-        var marker = new google.maps.Marker({
-          position: uluru,
-          map: map
-        });
-      }
+
+    /* Map Setup */
+    var latlng = new google.maps.LatLng(53.181957, -3.876466);
+    var mapOptions = {
+        zoom: 6,
+        center: latlng
+    }
+
+    /* Initialize Google Services */
+    map = new google.maps.Map(document.getElementById('map'), mapOptions);
+    geocoder = new google.maps.Geocoder();
+}
+
 
 function findRestaurants() {
 
+    /* Get information user entered */
     var location = document.getElementById("location-entry").value;
     var recipe = document.getElementById("recipe-entry").value;
 
-    window.alert(location + " " + recipe);
+    /* Convert location into coordinates */
+    geocoder.geocode( {'address': location}, function(result, status) {
+        if (status == 'OK') {
+            map.setCenter(result[0].geometry.location);
+            var marker = new google.maps.Marker({
+                map: map,
+                position: result[0].geometry.location
+            });
+        } else {
+            alert('Geocode was not successful for the following reason: ' + status);
+        }
+    });
 }

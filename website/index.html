@@ -79,12 +79,14 @@
             <div class="enter-field">
               <form class="form-inline" id="recipe-entry">
                 <div class="form-group">
-                  <div class="input-group" style="width: 220px;">
-                    <input type="text" class="form-control" id="recipe-entry" placeholder="Meal">
-                  </div>
-                </div>
+                   
+                  
+    <input type="text" id="recipe-entry" class="form-control" aria-describedby="passwordHelpInline">
+    <small id="passwordHelpInline" class="text-muted">
+      Must be 8-20 characters long.
+    </small></div>
                 <div class="form-group">
-                  <div class="input-group" style="width: 250px;">
+                  <div class="input-group">
                     <input type="text" class="form-control" id="location-entry" placeholder="Location">
                   </div>
                 </div>
@@ -106,14 +108,21 @@
           <div class="col-md-6" id="map">
           </div>
           <div class="col-md-6">
-            <h2>Sup</h2>
+            <h2 id="restaurant-title">List</h2>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Portfolio Grid Section -->
+    <!-- Healthy Alternatives Section -->
     <section id="recipes" class="bg-light-gray">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12 text-center">
+            <h2 class="section-heading">Healthy Alternatives</h2>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- About Section -->
@@ -137,8 +146,10 @@
     <script src="js/recipe.js"></script>
 
     <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCy8BG544uiGRZRC72z1OzfH19dnrAoA1k&callback=initMap">
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCy8BG544uiGRZRC72z1OzfH19dnrAoA1k&libraries=places&callback=initMap">
     </script>
+
+    
 
 </body>
 
