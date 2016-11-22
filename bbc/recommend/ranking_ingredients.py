@@ -15,11 +15,11 @@ def ranked_result_of_ingredient():
     d = {}
     for item in list:
         d[item] = list.count(item)
-    print(d)
+    #print(d)
     return d
 
 
 def write_ranking_result():
-    json.dump(ranked_result_of_ingredient(), open('ingredients_ranking.json','w'))
+    json.dump(ranked_result_of_ingredient(), open('ingredientsRanking.json','w'))
 
 write_ranking_result()
