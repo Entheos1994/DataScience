@@ -13,5 +13,6 @@ class Recipe(scrapy.Item):
     name = scrapy.Field()
     url = scrapy.Field()
     ingredients = scrapy.Field()
+    quantities = scrapy.Field()
     list_ingredients = scrapy.Field()
     method = scrapy.Field()
