@@ -12,7 +12,7 @@ from scrapy import log
 
 from bs4 import BeautifulSoup, NavigableString
 import urllib2
-
+from fuzzywuzzy import process
 import re
 
 def replace(c):
@@ -22,26 +22,25 @@ def replace(c):
             raise DropItem("Unexpeted tag")
         return c
 
-#         self.amount = u'(?P<amount>([0-9]|¼|½|¾|ml|lb|oz|/|x|-|fl|tbsp|tsp|g|kg|or| |small|large|medium|slice|tins?|cloves?|of|\.|cm|in|piece|toasted|frozen|fresh|chopped|pints|heaped|free-range)*)?'
-#         self.stoplist=[u'\\b-\\b',u'\\b[0-9]+\\b',u'\\bsmall\\b',u'\\blarge\\b',u'\\bmedium\\b',u'\\bslice\\b',u'\\btins\\b',u'\\bcloves\\b',u'\\bof\\b',u'\\bcm\\b',u'\\bin\\b',u'\\bpiece\\b',u'\\btoasted\\b',u'\\bfrozen\\b',u'\\bfresh\\b',u'\\bchopped\\b',u'\\bpints\\b',u'\\bheaped\\b',u'\\bfree-range\\b',u'\\b¼\\b',u'\\b½\\b',u'\\b¾\\b',u'\\bml\\b',u'\\blb\\b',u'\\boz\\b',u'\\b/\\b',u'\\bx\\b',u'\\b-\\b',u'\\bfl\\b',u'\\btbsp\\b',u'\\btsp\\b',u'\\bg\\b',u'\\bkg\\b',u'\\bor\\b',u'\\bplain\\b',u'\\bthin\\b',u'\\bslice\\b','of\\b',u'\\ba\\b',u'\\bfinely\\b',u'\\bleaves\\b',u'\\bfreshly\\b','u\\bthinly\\b',u'\\bhandful\\b',u'\\bdried\\b',u'\\bdrizzle\\b',u'\\bcalorie\\b', u'\\bcontrolled\\b',u'\\bchargrilled\b',u'\\borganic\\b',u'\\bfillet\\b',u'\\bshapes\\b',u'\\bwhole\\b',u'\\blowcalorie\\b',u'\\bsqueeze\\b',u'\\bnew\\b',u'\\bripe\\b',u'\\bpint\\b',u'\\bcooking\\b',u'\\blittle\\b',u'\\byour\\b',u'\\bchoice\\b',u'\\bside\\b']
-
 class ExtractDataPipeline(object):
     with open('ingredients.txt') as f:
         ingredients_list = f.readlines()
         ingredients_list = map(str.strip,ingredients_list)
+        ingredients_list = map(lambda x : x.decode("utf-8"), ingredients_list)
 
     def extract_ingredient(self, line):
-        # print "Line: "+line
-        match = ''
-        for el in self.ingredients_list: # for every possible ingredient
-            if el in line: # check if the ingredient is in that line
-                if len(el) > len(match):
-                    match = el
-        result = {'name' : match , 'qty' : None , 'unit' : None }
+        print "Line: "+line[:15]
+        ingredient = ''
+        fuzzy_match = process.extract(line, self.ingredients_list)
+        best_match_val = fuzzy_match[0][1]
+        candidates = [ x for x in fuzzy_match if x[1] == best_match_val ]
+        ingredient = max( candidates, key=len )[0]
+        result = {'name' : ingredient , 'qty' : None , 'unit' : None }
         line = line.decode('utf-8')
         line = re.sub(u"½", u".5", line)
         line = re.sub(u"¼", u".25", line)
         line = line.encode('utf-8')
+        line = line[:15]
         numbers = re.search("^[0-9]+", line)
         unitofmeasure = re.search("ml|g|tbsp|tsp|slices|liters|cm|kg", line)
         decimal = re.search("^\d*\.\d+", line)
