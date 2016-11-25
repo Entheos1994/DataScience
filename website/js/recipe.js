@@ -36,6 +36,8 @@ var markersArray = [];
         }
     })
 
+    $('.list-group-item').hover();
+
 
     
 })(jQuery); // End of use strict
@@ -48,7 +50,7 @@ function initMap() {
     var mapOptions = {
         zoom: 6,
         center: latlng
-    }
+    };
 
     /* Initialize Google Services */
     map = new google.maps.Map(document.getElementById('map'), mapOptions);
@@ -90,19 +92,23 @@ function callback(results, status) {
 
         for (var i = 0; i < results.length; i++) {
             createMarker(results[i]);
-            addToList(results[i]);
             console.log(results[i]);
         }
     }
 }
 
-/* Place a marker on the map with restaurant name */
+/**
+ * Place a marker on the map with restaurant name
+ * @param place Place object from Google Places
+ */
 function createMarker(place) {
 
     var marker = new google.maps.Marker({
         map: map,
         position: place.geometry.location
     });
+
+    marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
 
     // Push marker to array
     markersArray.push(marker);
@@ -111,20 +117,34 @@ function createMarker(place) {
         infoWindow.setContent(place.name);
         infoWindow.open(map,this);
     });
+
+    addToList(place, marker);
 }
 
-function addToList(place) {
+function addToList(place, marker) {
 
-    $('.list-group').append('<a href="#" class="list-group-item list-group-item-action">' + place.name + '</a>');
-
+    $('.list-group').append('<a href="#" class="list-group-item list-group-item-action" id="' + place.id + '">' + place.name + '</a>');
+    $('#' + place.id).hover(function() {
+        marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png')
+    }, function() {
+        marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png')
+    });
 }
 
 /**
- * Remove all markers from the map
+ * Remove all markers from the map and clear the list of restaurants
  */
 function clearMarkers() {
+
+    // Remove markers from the map
     for(var i = 0; i < markersArray.length; i++) {
         markersArray[i].setMap(null);
     }
+
+    // Reset the markers array
+    markersArray.length = 0;
+
+    // Reset the restaurant list
+    $('.list-group').html('');
 }
 
