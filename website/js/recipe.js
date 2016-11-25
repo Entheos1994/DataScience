@@ -4,6 +4,7 @@ var geocoder;
 var map;
 var placesService;
 var infoWindow;
+var markersArray = [];
 
 (function($) {
     "use strict"; // Start of use strict
@@ -69,23 +70,28 @@ function findRestaurants() {
             console.log(results);
             placesService.nearbySearch({
                 location: results[0].geometry.location,
-                radius: 2000,
+                radius: 10000,
                 type: ['restaurant']
             }, callback);
-    
+
+            // Set the correct zoom
             map.setCenter(results[0].geometry.location);
-            map.setZoom(14);
+            map.fitBounds(results[0].geometry.viewport);
         } else {
             alert('Geocode was not successful for the following reason: ' + status);
         }
     });
 }
 
-
 function callback(results, status) {
     if (status === google.maps.places.PlacesServiceStatus.OK) {
+
+        clearMarkers();
+
         for (var i = 0; i < results.length; i++) {
             createMarker(results[i]);
+            addToList(results[i]);
+            console.log(results[i]);
         }
     }
 }
@@ -98,10 +104,27 @@ function createMarker(place) {
         position: place.geometry.location
     });
 
+    // Push marker to array
+    markersArray.push(marker);
+
     google.maps.event.addListener(marker, 'click', function() {
         infoWindow.setContent(place.name);
         infoWindow.open(map,this);
     });
 }
 
+function addToList(place) {
+
+    $('.list-group').append('<a href="#" class="list-group-item list-group-item-action">' + place.name + '</a>');
+
+}
+
+/**
+ * Remove all markers from the map
+ */
+function clearMarkers() {
+    for(var i = 0; i < markersArray.length; i++) {
+        markersArray[i].setMap(null);
+    }
+}
 
