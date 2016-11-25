@@ -10,7 +10,14 @@ class IngredientsSpider(CrawlSpider):
     start_urls = ['http://www.bbc.co.uk/food/ingredients/by/letter/a']
     rules = [ Rule(LinkExtractor(allow=r'[a-z]$'), callback='parse_item', follow=False) ]
     seen = set()
-
+    # generate list from the mongodb of the urls already visited
+    os.system('mongo --quiet --eval "db.bbc.distinct("url")" recipes > bbc.txt')
+    with open('bbc.txt') as f:
+        seen_urls = f.readlines()
+        seen_urls = map(str.strip,seen_urls)
+    for el in seen_urls:
+        cleand_url = el.strip('\",')
+        seen.add(cleand_url)
 
     def parse_item(self, response):
         ingredients = response.css('#foods-by-letter a:nth-child(1)')
