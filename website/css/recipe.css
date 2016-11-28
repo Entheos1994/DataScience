@@ -196,6 +196,11 @@ header .enter-field {
         width: 50%;
        }
 
+.list-group {
+  max-height: 600px;
+  overflow-y:scroll;
+}
+
 section {
   padding: 50px 0;
 }

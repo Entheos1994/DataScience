@@ -1,10 +1,12 @@
-// Agency Theme JavaScript
-
+// Google Maps Variables
 var geocoder;
 var map;
 var placesService;
 var infoWindow;
+
+// Arrays to keep track of map markers and place ids
 var markersArray = [];
+var placeIds = [];
 
 (function($) {
     "use strict"; // Start of use strict
@@ -34,7 +36,7 @@ var markersArray = [];
         offset: {
             top: 100
         }
-    })
+    });
 
     $('.list-group-item').hover();
 
@@ -45,7 +47,7 @@ var markersArray = [];
 
 function initMap() {
 
-    /* Map Setup */
+    /* Map Setup - Initial map is the UK */
     var latlng = new google.maps.LatLng(53.181957, -3.876466);
     var mapOptions = {
         zoom: 6,
@@ -60,7 +62,10 @@ function initMap() {
 }
 
 
-function findRestaurants() {
+/**
+ * Convert the location the user entered into coordinates to search restaurants using Google Places.
+ */
+function findLocation() {
 
     /* Get information user entered */
     var location = document.getElementById("location-entry").value;
@@ -70,30 +75,45 @@ function findRestaurants() {
     geocoder.geocode( {'address': location}, function(results, status) {
         if (status == 'OK') {
             console.log(results);
-            placesService.nearbySearch({
+            placesService.radarSearch({
                 location: results[0].geometry.location,
-                radius: 10000,
+                radius: 5000,
                 type: ['restaurant']
-            }, callback);
-
-            // Set the correct zoom
-            map.setCenter(results[0].geometry.location);
-            map.fitBounds(results[0].geometry.viewport);
+            }, radarCallback);
         } else {
             alert('Geocode was not successful for the following reason: ' + status);
         }
     });
+
+
+
 }
 
-function callback(results, status) {
+function radarCallback(results, status) {
     if (status === google.maps.places.PlacesServiceStatus.OK) {
 
+
+        // Clear the previous search
         clearMarkers();
 
-        for (var i = 0; i < results.length; i++) {
+        for(var i = 0; i < results.length; i++) {
+            placeIds.push(results[i].place_id);
+
+            geocoder.geocode({'placeId': results[i].place_id}, function(results, status) {
+                console.log(results);
+            });
             createMarker(results[i]);
-            console.log(results[i]);
         }
+
+        var bounds = new google.maps.LatLngBounds();
+        for (var i = 0; i < markersArray.length; i++) {
+            bounds.extend(markersArray[i].getPosition());
+        }
+
+        map.fitBounds(bounds);
+        map.setCenter(bounds.getCenter());
+
+        console.log(placeIds.length);
     }
 }
 
@@ -108,13 +128,14 @@ function createMarker(place) {
         position: place.geometry.location
     });
 
+    // Set the default red Icon
     marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
 
     // Push marker to array
     markersArray.push(marker);
 
     google.maps.event.addListener(marker, 'click', function() {
-        infoWindow.setContent(place.name);
+        infoWindow.setContent(place.id);
         infoWindow.open(map,this);
     });
 
@@ -123,7 +144,7 @@ function createMarker(place) {
 
 function addToList(place, marker) {
 
-    $('.list-group').append('<a href="#" class="list-group-item list-group-item-action" id="' + place.id + '">' + place.name + '</a>');
+    $('.list-group').append('<a href="#" class="list-group-item list-group-item-action" id="' + place.id + '">' + place.id + '</a>');
     $('#' + place.id).hover(function() {
         marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png')
     }, function() {
