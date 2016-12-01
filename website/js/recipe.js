@@ -4,9 +4,13 @@ var map;
 var placesService;
 var infoWindow;
 
-// Arrays to keep track of map markers and place ids
+// Array to keep track of map markers
 var markersArray = [];
-var placeIds = [];
+
+// four square api variables
+var fourSquareKey = 'LECWBWPT1G4HKYS2UMOIG0TVROVLEODL2AIYH1SYK4ZOZSCM';
+var fourSquareId = 'GEYHVEZTATSETIP3J4ZDFIHTQWIPPKLPRV0VQUF1P23L1JJ2';
+var fourSquareRestaurant = '4d4b7105d754a06374d81259';
 
 (function($) {
     "use strict"; // Start of use strict
@@ -39,12 +43,12 @@ var placeIds = [];
     });
 
     $('.list-group-item').hover();
-
-
     
 })(jQuery); // End of use strict
 
-
+/**
+ * Initialize google map variables
+ */
 function initMap() {
 
     /* Map Setup - Initial map is the UK */
@@ -71,50 +75,56 @@ function findLocation() {
     var location = document.getElementById("location-entry").value;
     var recipe = document.getElementById("recipe-entry").value;
 
+    var ll = null;
+
     /* Convert location into coordinates and retrieve restaurants */
     geocoder.geocode( {'address': location}, function(results, status) {
         if (status == 'OK') {
             console.log(results);
-            placesService.radarSearch({
-                location: results[0].geometry.location,
-                radius: 5000,
-                type: ['restaurant']
-            }, radarCallback);
+            console.log(results[0].geometry.location.lat());
+
+            var latitude = results[0].geometry.location.lat();
+            var longitude = results[0].geometry.location.lng();
+            ll = latitude.toFixed(2)+ ',' + longitude.toFixed(2);
+            console.log(ll);
+
         } else {
             alert('Geocode was not successful for the following reason: ' + status);
         }
     });
 
+    /* Rest request to get restaurant information based on user's query */
+    $.ajax({
+        type:'get',
+        url: 'https://api.foursquare.com/v2/venues/search',
+        data: {client_id: fourSquareKey, client_secret: fourSquareId, ll: '50.91,-1.40',
+            query: recipe, v:'20161130', categoryId: fourSquareRestaurant, intent: 'browse',
+            radius: 5000},
+        success: function(data) {
 
+            /* Clear the previous markers */
+            clearMarkers();
 
-}
+            /* Place markers on the map */
+            var venues = data.response.venues;
+            for(var i = 0; i < venues.length; i++) {
+                console.log(venues[i]);
+                createMarker(venues[i]);
+            }
 
-function radarCallback(results, status) {
-    if (status === google.maps.places.PlacesServiceStatus.OK) {
-
-
-        // Clear the previous search
-        clearMarkers();
-
-        for(var i = 0; i < results.length; i++) {
-            placeIds.push(results[i].place_id);
-
-            geocoder.geocode({'placeId': results[i].place_id}, function(results, status) {
-                console.log(results);
-            });
-            createMarker(results[i]);
+            /* Set the map boundaries */
+            var bounds = new google.maps.LatLngBounds();
+            for (i = 0; i < markersArray.length; i++) {
+                bounds.extend(markersArray[i].getPosition());
+            }
+            map.fitBounds(bounds);
+            map.setCenter(bounds.getCenter());
+        },
+        error: function (xhr) {
+            console.log(xhr.status + ": " + xhr.responseText);
         }
 
-        var bounds = new google.maps.LatLngBounds();
-        for (var i = 0; i < markersArray.length; i++) {
-            bounds.extend(markersArray[i].getPosition());
-        }
-
-        map.fitBounds(bounds);
-        map.setCenter(bounds.getCenter());
-
-        console.log(placeIds.length);
-    }
+    });
 }
 
 /**
@@ -123,9 +133,11 @@ function radarCallback(results, status) {
  */
 function createMarker(place) {
 
+    /* Create the marker */
+    var latlng = {lat: place.location.lat, lng: place.location.lng};
     var marker = new google.maps.Marker({
         map: map,
-        position: place.geometry.location
+        position: latlng
     });
 
     // Set the default red Icon
@@ -134,17 +146,25 @@ function createMarker(place) {
     // Push marker to array
     markersArray.push(marker);
 
-    google.maps.event.addListener(marker, 'click', function() {
-        infoWindow.setContent(place.id);
-        infoWindow.open(map,this);
+    /* Marker listener */
+    marker.addListener('click', function() {
+        infoWindow.setContent(place.name);
+        infoWindow.open(map,marker);
     });
 
+    /* Add restaurant information to list beside map */
     addToList(place, marker);
 }
 
+
+/**
+ * Add restaurant information to list beside the map
+ * @param place Restaurant object
+ * @param marker Google Maps Marker
+ */
 function addToList(place, marker) {
 
-    $('.list-group').append('<a href="#" class="list-group-item list-group-item-action" id="' + place.id + '">' + place.id + '</a>');
+    $('.list-group').append('<a class="list-group-item list-group-item-action" id="' + place.id + '">' + place.name + '</a>');
     $('#' + place.id).hover(function() {
         marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png')
     }, function() {
