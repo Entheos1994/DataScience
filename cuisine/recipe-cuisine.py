@@ -20,9 +20,12 @@ bbc = db.bbcfood
 
 
 recipe_list = json.load(open('cuisine/recipe_name.json','r'))
-probability = json.load(open('cuisine/pretty_cuisine.json', 'r'))
+probability = json.load(open('cuisine/probability_update.json', 'r'))
 ingred_count = json.load(open('cuisine/ingred_count.json', 'r'))
-filter = [x[0] for x in ingred_count[:20]]
+#ingred_count = json.load(open('ingred_count.json', 'r'))
+
+#weight = json.load(open('cuisine/ingred_weight.json','r'))
+
 
 def cuisine_relate(enter_recipe, recipe_list=recipe_list, probability=probability, filter=filter, bbc=bbc):
 
@@ -45,9 +48,7 @@ def cuisine_relate(enter_recipe, recipe_list=recipe_list, probability=probabilit
         recipe_ingred[recipe] = bbc.find_one({'name':recipe})['ingredients']
 
     ## remove common ingreds
-    for x in recipe_ingred:
-        if x in filter:
-            recipe_ingred.remove(x)
+
 
 
     # cuisine prob add up
