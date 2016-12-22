@@ -140,6 +140,22 @@ function createMarker(place) {
         position: latlng
     });
 
+    var venueId = place.id;
+    $.ajax({
+        type:'get',
+        url: 'https://api.foursquare.com/v2/venues/' + venueId + '/photos',
+        data: {client_id: fourSquareKey, client_secret: fourSquareId, v:'20161130'},
+        success: function(data) {
+
+            if(data.response.photos.count > 0)
+                console.log(data);
+        },
+        error: function (xhr) {
+            console.log(xhr.status + ": " + xhr.responseText);
+        }
+
+    });
+
     // Set the default red Icon
     marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
 
@@ -164,7 +180,7 @@ function createMarker(place) {
  */
 function addToList(place, marker) {
 
-    $('.list-group').append('<a class="list-group-item list-group-item-action" id="' + place.id + '">' + place.name + '</a>');
+    $('.list-group').append('<div><a class="list-group-item list-group-item-action" id="' + place.id + '"><h6>' + place.name + '</h6></a></div>');
     $('#' + place.id).hover(function() {
         marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png')
     }, function() {
