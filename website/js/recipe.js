@@ -10,7 +10,30 @@ var markersArray = [];
 // four square api variables
 var fourSquareKey = 'LECWBWPT1G4HKYS2UMOIG0TVROVLEODL2AIYH1SYK4ZOZSCM';
 var fourSquareId = 'GEYHVEZTATSETIP3J4ZDFIHTQWIPPKLPRV0VQUF1P23L1JJ2';
-var fourSquareRestaurant = '4d4b7105d754a06374d81259';
+
+var restaurantIds = {};
+restaurantIds['irish'] = '52e81612bcbc57f1066b7a06';
+restaurantIds['mexican'] = '4bf58dd8d48988d1c1941735';
+restaurantIds['chinese'] = '4bf58dd8d48988d145941735';
+restaurantIds['japanese'] = '4bf58dd8d48988d111941735';
+restaurantIds['moroccan'] = '4bf58dd8d48988d1c3941735';
+restaurantIds['french'] = '4bf58dd8d48988d10c941735';
+restaurantIds['spanish'] = '4bf58dd8d48988d150941735';
+restaurantIds['russian'] = '5293a7563cf9994f4e043a44';
+restaurantIds['thai'] = '4bf58dd8d48988d149941735';
+restaurantIds['southern_us'] = '4bf58dd8d48988d14f941735';
+restaurantIds['filipino'] = '4eb1bd1c3b7b55596b4a748f';
+restaurantIds['vietnamese'] = '4eb1bd1c3b7b55596b4a748f';
+restaurantIds['british'] = '52e81612bcbc57f1066b7a05';
+restaurantIds['greek'] = '4bf58dd8d48988d10e941735';
+restaurantIds['indian'] = '4bf58dd8d48988d10e941735';
+restaurantIds['jamaican'] = '4bf58dd8d48988d144941735';
+restaurantIds['brazilian'] = '4bf58dd8d48988d16b941735';
+restaurantIds['cajun_creole'] = '4bf58dd8d48988d17a941735';
+restaurantIds['korean'] = '4bf58dd8d48988d113941735';
+restaurantIds['italian'] = '4bf58dd8d48988d110941735';
+
+var testCuisine = {"irish": 0.0, "mexican": 0.0, "chinese": 0.0, "japanese": 0.3333333333333333, "moroccan": 0.0, "french": 0.3333333333333333, "spanish": 0.0, "russian": 0.0, "thai": 0.3333333333333333, "southern_us": 0.0, "filipino": 0.0, "vietnamese": 0.0, "british": 0.0, "greek": 0.0, "indian": 0.0, "jamaican": 0.0, "brazilian": 0.0, "cajun_creole": 0.0, "korean": 0.0, "italian": 0.0};
 
 (function($) {
     "use strict"; // Start of use strict
@@ -81,25 +104,49 @@ function findLocation() {
     geocoder.geocode( {'address': location}, function(results, status) {
         if (status == 'OK') {
             console.log(results);
-            console.log(results[0].geometry.location.lat());
 
             var latitude = results[0].geometry.location.lat();
             var longitude = results[0].geometry.location.lng();
             ll = latitude.toFixed(2)+ ',' + longitude.toFixed(2);
-            console.log(ll);
 
+            findRestaurants(ll, determineCuisines(testCuisine));
+            
         } else {
             alert('Geocode was not successful for the following reason: ' + status);
         }
     });
+}
 
+/**
+ * Determine which restaurants to search by cuisine
+ *
+ * @param recipe JSON containing cuisine percentages
+ * @returns {string} Restaurant categories from fourspace
+ */
+function determineCuisines(recipe)
+{
+    var cuisines = "";
+
+    for (var key in recipe){
+        var attrValue = recipe[key];
+
+        if(attrValue >= 0.25)
+            cuisines = cuisines + restaurantIds[key] + ",";
+    }
+
+    cuisines = cuisines.slice(0, -1);
+
+    return cuisines;
+}
+
+function findRestaurants(location, cuisine) {
     /* Rest request to get restaurant information based on user's query */
     $.ajax({
         type:'get',
         url: 'https://api.foursquare.com/v2/venues/search',
-        data: {client_id: fourSquareKey, client_secret: fourSquareId, ll: '50.91,-1.40',
-            query: recipe, v:'20161130', categoryId: fourSquareRestaurant, intent: 'browse',
-            radius: 5000},
+        data: {client_id: fourSquareKey, client_secret: fourSquareId, ll: location,
+            v:'20161130', categoryId: cuisine, intent: 'browse',
+            radius: 10000},
         success: function(data) {
 
             /* Clear the previous markers */
@@ -141,20 +188,6 @@ function createMarker(place) {
     });
 
     var venueId = place.id;
-    $.ajax({
-        type:'get',
-        url: 'https://api.foursquare.com/v2/venues/' + venueId + '/photos',
-        data: {client_id: fourSquareKey, client_secret: fourSquareId, v:'20161130'},
-        success: function(data) {
-
-            if(data.response.photos.count > 0)
-                console.log(data);
-        },
-        error: function (xhr) {
-            console.log(xhr.status + ": " + xhr.responseText);
-        }
-
-    });
 
     // Set the default red Icon
     marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
