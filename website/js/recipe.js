@@ -33,7 +33,7 @@ restaurantIds['cajun_creole'] = '4bf58dd8d48988d17a941735';
 restaurantIds['korean'] = '4bf58dd8d48988d113941735';
 restaurantIds['italian'] = '4bf58dd8d48988d110941735';
 
-var testCuisine = {"irish": 0.0, "mexican": 0.0, "chinese": 0.0, "japanese": 0.3333333333333333, "moroccan": 0.0, "french": 0.3333333333333333, "spanish": 0.0, "russian": 0.0, "thai": 0.3333333333333333, "southern_us": 0.0, "filipino": 0.0, "vietnamese": 0.0, "british": 0.0, "greek": 0.0, "indian": 0.0, "jamaican": 0.0, "brazilian": 0.0, "cajun_creole": 0.0, "korean": 0.0, "italian": 0.0};
+var testCuisine = {"irish": 0.0, "mexican": 33.0, "chinese": 33.0, "japanese": 0.0, "moroccan": 0.0, "french": 0.0, "spanish": 0.33, "russian": 0.0, "thai": 0.0, "southern_us": 0.0, "filipino": 0.0, "vietnamese": 0.0, "british": 0.0, "greek": 0.0, "indian": 0.0, "jamaican": 0.0, "brazilian": 0.0, "cajun_creole": 0.0, "korean": 0.0, "italian": 0.0};
 
 (function($) {
     "use strict"; // Start of use strict
@@ -107,10 +107,36 @@ function findLocation() {
 
             var latitude = results[0].geometry.location.lat();
             var longitude = results[0].geometry.location.lng();
+            var latlng = {lat: latitude, lng: longitude};
             ll = latitude.toFixed(2)+ ',' + longitude.toFixed(2);
 
+            /* Clear the previous markers */
+            clearMarkers();
+
+            /* Create the marker */
+            var marker = new google.maps.Marker({
+                map: map,
+                position: latlng
+            });
+
+            console.log(marker);
+
+            // Set the default red Icon
+            marker.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
+
+            // Push marker to array
+            markersArray.push(marker);
+
+            console.log(markersArray);
+
+            /* Marker listener */
+            marker.addListener('click', function() {
+                infoWindow.setContent('You');
+                infoWindow.open(map,marker);
+            });
+
             findRestaurants(ll, determineCuisines(testCuisine));
-            
+
         } else {
             alert('Geocode was not successful for the following reason: ' + status);
         }
@@ -146,18 +172,15 @@ function findRestaurants(location, cuisine) {
         url: 'https://api.foursquare.com/v2/venues/search',
         data: {client_id: fourSquareKey, client_secret: fourSquareId, ll: location,
             v:'20161130', categoryId: cuisine, intent: 'browse',
-            radius: 10000},
+            radius: 5000},
         success: function(data) {
 
-            /* Clear the previous markers */
-            clearMarkers();
+
 
             /* Place markers on the map */
             var venues = data.response.venues;
-            for(var i = 0; i < venues.length; i++) {
-                console.log(venues[i]);
+            for(var i = 0; i < venues.length; i++)
                 createMarker(venues[i]);
-            }
 
             /* Set the map boundaries */
             var bounds = new google.maps.LatLngBounds();
@@ -187,8 +210,6 @@ function createMarker(place) {
         position: latlng
     });
 
-    var venueId = place.id;
-
     // Set the default red Icon
     marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
 
@@ -213,8 +234,33 @@ function createMarker(place) {
  */
 function addToList(place, marker) {
 
-    $('.list-group').append('<div><a class="list-group-item list-group-item-action" id="' + place.id + '"><h6>' + place.name + '</h6></a></div>');
-    $('#' + place.id).hover(function() {
+    var name = place.name;
+    var id = place.id;
+    var phone = place['contact'].formattedPhone;
+    var url = String(place.url);
+    var address;
+
+    if(phone == 'undefined')
+        phone = '';
+
+    if(url == 'undefined')
+        url = '';
+    else
+        url = url.substring(7);
+
+    if(place['location'].address != 'undefined') {
+
+        if(place['location'].city != 'undefined')
+            address = place['location'].address + ", " + place['location'].city;
+        else
+            address = place['location'].address;
+    }
+    else
+        address = '';
+
+    $('.list-group').append('<div><a class="list-group-item list-group-item-action" id="' + id + '"><h6>' + name
+        + '</h6><p>' + address + '</p><p>' + url + '</p><p>' + phone + '</p></a></div>');
+    $('#' + id).hover(function() {
         marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png')
     }, function() {
         marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png')
