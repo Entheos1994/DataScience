@@ -33,7 +33,7 @@ restaurantIds['cajun_creole'] = '4bf58dd8d48988d17a941735';
 restaurantIds['korean'] = '4bf58dd8d48988d113941735';
 restaurantIds['italian'] = '4bf58dd8d48988d110941735';
 
-var testCuisine = {"irish": 0.0, "mexican": 33.0, "chinese": 33.0, "japanese": 0.0, "moroccan": 0.0, "french": 0.0, "spanish": 0.33, "russian": 0.0, "thai": 0.0, "southern_us": 0.0, "filipino": 0.0, "vietnamese": 0.0, "british": 0.0, "greek": 0.0, "indian": 0.0, "jamaican": 0.0, "brazilian": 0.0, "cajun_creole": 0.0, "korean": 0.0, "italian": 0.0};
+var testCuisine = {"irish": 0.0, "mexican": 0.0, "chinese": 50.0, "japanese": 0.0, "moroccan": 0.0, "french": 0.0, "spanish": 0.0, "russian": 0.0, "thai": 0.0, "southern_us": 0.0, "filipino": 0.0, "vietnamese": 0.0, "british": 0.0, "greek": 0.0, "indian": 50.0, "jamaican": 0.0, "brazilian": 0.0, "cajun_creole": 0.0, "korean": 0.0, "italian": 0.0};
 
 (function($) {
     "use strict"; // Start of use strict
@@ -138,7 +138,10 @@ function findLocation() {
             findRestaurants(ll, determineCuisines(testCuisine));
 
         } else {
-            alert('Geocode was not successful for the following reason: ' + status);
+
+            $("#error-title").text("Error");
+            $("#error-body").text('Geocode was not successful for the following reason: ' + status);
+            $('#modal-error').modal('show')
         }
     });
 }
@@ -192,6 +195,9 @@ function findRestaurants(location, cuisine) {
         },
         error: function (xhr) {
             console.log(xhr.status + ": " + xhr.responseText);
+            $("#error-title").text("Error");
+            $("#error-body").text('Restaurant search was not successful for the following reason: ' + xhr.status);
+            $('#modal-error').modal('show')
         }
 
     });
@@ -234,32 +240,33 @@ function createMarker(place) {
  */
 function addToList(place, marker) {
 
+    /* Restaurant information */
     var name = place.name;
     var id = place.id;
     var phone = place['contact'].formattedPhone;
     var url = String(place.url);
-    var address;
+    var formattedAddress = place['location'].formattedAddress;
 
-    if(phone == 'undefined')
+    /* Don't display information if it doesn't exists */
+    if(phone === undefined)
         phone = '';
 
-    if(url == 'undefined')
+    /* Remove http:// from url */
+    if(url === 'undefined')
         url = '';
     else
         url = url.substring(7);
 
-    if(place['location'].address != 'undefined') {
+    /* Create address string */
+    var address = "";
+    for(var i = 0; i < formattedAddress.length-1; i++)
+        address = address + formattedAddress[i] + ", ";
 
-        if(place['location'].city != 'undefined')
-            address = place['location'].address + ", " + place['location'].city;
-        else
-            address = place['location'].address;
-    }
-    else
-        address = '';
+    /* Remove last comma and space from address */
+    address = address.substring(0, address.length-2);
 
-    $('.list-group').append('<div><a class="list-group-item list-group-item-action" id="' + id + '"><h6>' + name
-        + '</h6><p>' + address + '</p><p>' + url + '</p><p>' + phone + '</p></a></div>');
+    $('.list-group').append('<div><button class="list-group-item list-group-item-action restaurant-list" id="' + id + '"><h4>' + name
+        + '</h4><p class="restaurant-info">' + address + '</p><p class="restaurant-info">' + url + '</p><p class="restaurant-info">' + phone + '</p></button></div>');
     $('#' + id).hover(function() {
         marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png')
     }, function() {

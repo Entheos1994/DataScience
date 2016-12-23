@@ -247,3 +247,12 @@ section h3.section-subheading {
 .ui-helper-hidden-accessible {
   display: none
 }
+
+.restaurant-list {
+
+}
+
+.restaurant-info {
+  margin: 0;
+  padding: 0;
+}
