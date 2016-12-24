@@ -98,6 +98,21 @@ function findLocation() {
     var location = document.getElementById("location-entry").value;
     var recipe = document.getElementById("recipe-entry").value;
 
+
+    $.ajax({
+        type:'POST',
+        url: '/recipe',
+        data: {recipe_name: recipe},
+        success: function(data) {
+
+            console.log(data);
+       },
+        error: function (xhr) {
+            console.log(xhr.status + ": " + xhr.responseText);
+       }
+
+    });
+
     var ll = null;
 
     /* Convert location into coordinates and retrieve restaurants */
