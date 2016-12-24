@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block navigation %}
+<!-- Navigation -->
+<nav id="mainNav" class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle naviation</span> Menu <i class="fa fa-bars"></i>
+            </button>
+            <a class="navbar-brand page-scroll" href="#page-top">Home</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li class="hidden">
+                    <a href="#page-top"></a>
+                </li>
+                <li>
+                    <a class="page-scroll" href="#restaurants">Restaurants</a>
+                </li>
+                <li>
+                    <a class="page-scroll" href="#healthy-recipes">Healthy Alternatives</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>                
+{% endblock %}
+
+{% block header %}
+<header>
+    <div class="container">
+        <div class="intro-text">
+            <div class="intro-lead-in">Welcome To A New Lifestyle!</div>
+            <div class="intro-heading">Enter your location below</div>
+        </div>
+        <div class="enter-field">
+            <form class="form-inline">
+                <div class="form-group">
+                    <div class="form-group ui-widget">
+                        <input type="text" class="form-control autocomplete" id="recipe-entry" placeholder="Meal">
+                    </div>
+                    <div class="form-group ui-widget">
+                        <input type="text" class="form-control" id="location-entry" placeholder="Location">
+                    </div>
+                </div>
+            </form>
+            <a href="#restaurants" onclick="findLocation();" class="page-scroll btn btn-xl">Tell Me More</a>
+        </div>
+    </div>
+</header>
+{% endblock %}
+
+{% block healthy %}
+<section id="healthy-recipes" class="bg-light-gray">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h2 class="section-heading">Healthy Alternatives</h2>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block restaurant %}
+<section id="restaurants">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h2 class="section-heading">Restaurants</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6" id="map">
+            </div>
+            <div class="col-md-6">
+                <div class="list-group">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
