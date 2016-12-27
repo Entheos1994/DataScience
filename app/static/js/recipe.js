@@ -35,6 +35,65 @@ restaurantIds['italian'] = '4bf58dd8d48988d110941735';
 
 var testCuisine = {"irish": 0.0, "mexican": 0.0, "chinese": 50.0, "japanese": 0.0, "moroccan": 0.0, "french": 0.0, "spanish": 0.0, "russian": 0.0, "thai": 0.0, "southern_us": 0.0, "filipino": 0.0, "vietnamese": 0.0, "british": 0.0, "greek": 0.0, "indian": 50.0, "jamaican": 0.0, "brazilian": 0.0, "cajun_creole": 0.0, "korean": 0.0, "italian": 0.0};
 
+var testRecipe = [
+    {
+        "id": "id1",
+        "name": "Fish and Chips",
+        "ingredients": ["aa", "AA"],
+        "healthy": 0.2,
+        "img": "path to img"
+    },
+    {
+        "id": "id2",
+        "name": "Fish and Chips",
+        "ingredients": ["aa", "AA"],
+        "healthy": 0.2,
+        "img": "path to img"
+    },
+    {
+        "id": "id3",
+        "name": "Fish and Chips",
+        "ingredients": ["aa", "AA"],
+        "healthy": 0.2,
+        "img": "path to img"
+    },
+    {
+        "id": "id4",
+        "name": "Fish and Chips",
+        "ingredients": ["aa", "AA"],
+        "healthy": 0.2,
+        "img": "path to img"
+    },
+    {
+        "id": "id5",
+        "name": "Fish and Chips",
+        "ingredients": ["aa", "AA"],
+        "healthy": 0.2,
+        "img": "path to img"
+    },
+    {
+        "id": "id6",
+        "name": "Fish and Chips",
+        "ingredients": ["aa", "AA"],
+        "healthy": 0.2,
+        "img": "path to img"
+    },
+    {
+        "id": "id7",
+        "name": "Fish and Chips",
+        "ingredients": ["aa", "AA"],
+        "healthy": 0.2,
+        "img": "path to img"
+    },
+    {
+        "id": "id8",
+        "name": "Fish and Chips",
+        "ingredients": ["aa", "AA"],
+        "healthy": 0.2,
+        "img": "path to img"
+    }
+];
+
 (function($) {
     "use strict"; // Start of use strict
 
@@ -99,6 +158,7 @@ function findLocation() {
     var recipe = document.getElementById("recipe-entry").value;
 
 
+    addRecipes(recipe);
     $.ajax({
         type:'POST',
         url: '/recipe',
@@ -306,3 +366,26 @@ function clearMarkers() {
     $('.list-group').html('');
 }
 
+function addRecipes(name) {
+
+    /* Remove previous recipes */
+    $('.recipe-row').remove();
+
+    var id = 0;
+    var recipe = "recipe-row-";
+    var recipeId;
+    for(var i = 0; i < testRecipe.length; i++) {
+        if(i % 3 == 0)
+        {
+            id = id + 1;
+            recipeId = recipe + id;
+            $('#recipe-container').append('<div class="row recipe-row" id="' + recipeId + '"></div>');
+        }
+
+        $('#' + recipeId).append('<div class="col-lg-4">' +
+                                    '<a href="#"><img class="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" width="140" height="140"></a>' +
+                                    '<h2>' + name + '</h2>' +
+                                    '<p>Recipe Information</p>' +
+                                    '</div>');
+    }
+}
