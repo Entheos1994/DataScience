@@ -1,7 +1,7 @@
 from flask import render_template, request, Response
 from app import app
-from cuisine import recipe_cuisine
-import recipe_suggestion
+from .cuisine import recipe_cuisine
+from .cuisine import recipe_suggestion
 import os
 import json
 
@@ -13,8 +13,12 @@ def index():
 @app.route('/recipe', methods=['POST'])
 def recipe():
     if request.method == 'POST':
-        recipe = request.form['recipe_name']
-        return recipe
+        recipe_name = request.form['recipe_name']
+        healthy = recipe_suggestion.get_recipe(str(recipe_name))
+        resp = Response(response=healthy,
+                        status=200,
+                        mimetype="application/json")
+        return resp
 
 @app.route('/cuisine', methods=['POST'])
 def cuisine():

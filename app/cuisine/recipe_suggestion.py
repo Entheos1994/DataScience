@@ -1,4 +1,6 @@
 from pymongo import MongoClient
+from bson import json_util
+
 client = MongoClient('localhost', 27017)
 db=client.test
 def get_recipe(recipe_name):
@@ -6,8 +8,7 @@ def get_recipe(recipe_name):
     ingre = bbc_food.get('ingredients') #obtain the ingredients of the recipe
     Rank=db.Rank.find_one()
 
-    #filt the ingredient that does not include the recipe
-    I1 = { key:Rank[key] for key in Rank.keys() & ingre}
+    I1 = { key:Rank[key] for key in Rank.keys() & ingre} #filt the ingredient that does not include the recipe
 
     I2 = sorted(I1.items(), key=lambda d: d[1], reverse = True) #order the ingredient as rank
 
@@ -124,15 +125,13 @@ def get_recipe(recipe_name):
         result['A-Class'] = {"Matching Rate":match_rate_A}
         result['A-Class'].update(score_A)
         print(result)
+
+        ingList = []
+
         for key in score_A:
-                         print (db.bbcHealthy.find_one({'name':key}))
+            ingList.append({'A-Class': db.bbcHealthy.find_one({'name': key})})
         for key in score_B:
-                    print(db.bbcHealthy.find_one({'name': key}))
+            ingList.append({'B-Class': db.bbcHealthy.find_one({'name': key})})
 
-
-
-
-
-
-get_recipe('How to make curry paste') #test
-
+        ingList.append(result)
+        return json_util.dumps(ingList)

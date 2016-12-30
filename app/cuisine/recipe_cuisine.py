@@ -68,5 +68,3 @@ def cuisine_relate(enter_recipe, recipe_list=recipe_list, probability=probabilit
 
     return json.dumps(result)
 
-
-

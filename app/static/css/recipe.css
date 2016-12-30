@@ -15,7 +15,6 @@ a.active {
 
 h1,
 h3,
-h4,
 h5,
 h6 {
   font-family: "Montserrat", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -223,7 +222,7 @@ section h2.section-heading {
   margin-bottom: 20px;
   text-align: center;
 }
-#recipe-container h2 {
+#recipe-container h2,h4 {
   font-weight: normal;
   font-family: "Montserrat", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }

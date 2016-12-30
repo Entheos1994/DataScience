@@ -155,8 +155,18 @@ function findLocation() {
     var location = document.getElementById("location-entry").value;
     var recipe = document.getElementById("recipe-entry").value;
 
+    $.ajax({
+                type:'POST',
+                url: '/recipe',
+                data: {recipe_name: recipe},
+                success: function(data) {
+                    addRecipes(data);
+                },
+                error: function (xhr) {
+                    console.log(xhr.status + ": " + xhr.responseText);
+                }
+            });
 
-    addRecipes(recipe);
     var ll = null;
 
     /* Convert location into coordinates and retrieve restaurants */
@@ -358,39 +368,39 @@ function clearMarkers() {
     $('.list-group').html('');
 }
 
-function addRecipes(name) {
+function addRecipes(recipes) {
 
     /* Remove previous recipes */
-    $('.recipe-row').remove();
+    console.log(recipes);
+    var a_class = recipes[0]['A-Class'];
+    var b_class1 = recipes[1]['B-Class'];
+    var b_class2 = recipes[2]['B-Class'];
 
-    var id = 0;
-    var recipe = "recipe-row-";
-    var recipeId;
-    for(var i = 0; i < testRecipe.length; i++) {
+    $('.recipe-img').empty();
 
-            id = id + 1;
-            recipeId = recipe + id;
-            $('#recipe-container').append('<div class="row recipe-row" id="' + recipeId + '"></div>');
+    $('#a-class').append('<a href="' + a_class['url'] + '" target="_blank">' +
+        '<img class="img-circle backup_picture" src="/static/pictures/recipe_pic/' +
+        a_class['name'] + '.jpg" width="200" height="200"></a>' +
+        '<h2>' + a_class['name'] + '</h2>' +
+        '<p><a class="btn btn-default" href="' + a_class['url'] +
+        '" target="_blank" role="button">View details &raquo;</a></p>');
 
+    $('#b-class1').append('<a href="' + b_class1['url'] + '" target="_blank">' +
+        '<img class="img-circle backup_picture" src="/static/pictures/recipe_pic/' +
+        b_class1['name'] + '.jpg" width="150" height="150"></a>' +
+        '<h4>' + b_class1['name'] + '</h4>' +
+        '<p><a class="btn btn-default" href="' + b_class1['url'] +
+        '" target="_blank" role="button">View details &raquo;</a></p>');
 
-        $('#' + recipeId).append('<div class="col-lg-12 center-block text-center">' +
-                                    '<a href="#"><img class="img-circle" src="/static/pictures/recipe_pic/roast pepper pesto pasta.jpg" alt="Generic placeholder image" width="250" height="250"></a>' +
-                                    '<h2>' + name + '</h2>' +
-                                    '<p>Recipe Information</p>' +
-                                    '</div>');
-    }
-}
+    $('#b-class2').append('<a href="' + b_class2['url'] + '" target="_blank">' +
+        '<img class="img-circle backup_picture" src="/static/pictures/recipe_pic/' +
+        b_class2['name'] + '.jpg" width="150" height="150"></a>' +
+        '<h4>' + b_class2['name'] + '</h4>' +
+        '<p><a class="btn btn-default" href="' + b_class2['url'] +
+        '" target="_blank" role="button">View details &raquo;</a></p>');
 
-function getTopN(arr, prop, n) {
-    // clone before sorting, to preserve the original array
-    var clone = arr.slice(0);
-
-    // sort descending
-    clone.sort(function(x, y) {
-        if (x[prop] == y[prop]) return 0;
-        else if (parseInt(x[prop]) < parseInt(y[prop])) return 1;
-        else return -1;
+    $(".backup_picture").on("error", function(){
+        $(this).attr('src', '/static/pictures/recipe_pic/healthy-substitute.jpg');
     });
 
-    return clone.slice(0, n || 1);
 }
