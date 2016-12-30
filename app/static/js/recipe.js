@@ -26,14 +26,12 @@ restaurantIds['filipino'] = '4eb1bd1c3b7b55596b4a748f';
 restaurantIds['vietnamese'] = '4eb1bd1c3b7b55596b4a748f';
 restaurantIds['british'] = '52e81612bcbc57f1066b7a05';
 restaurantIds['greek'] = '4bf58dd8d48988d10e941735';
-restaurantIds['indian'] = '4bf58dd8d48988d10e941735';
+restaurantIds['indian'] = '4bf58dd8d48988d10f941735';
 restaurantIds['jamaican'] = '4bf58dd8d48988d144941735';
 restaurantIds['brazilian'] = '4bf58dd8d48988d16b941735';
 restaurantIds['cajun_creole'] = '4bf58dd8d48988d17a941735';
 restaurantIds['korean'] = '4bf58dd8d48988d113941735';
 restaurantIds['italian'] = '4bf58dd8d48988d110941735';
-
-var testCuisine = {"irish": 0.0, "mexican": 0.0, "chinese": 50.0, "japanese": 0.0, "moroccan": 0.0, "french": 0.0, "spanish": 0.0, "russian": 0.0, "thai": 0.0, "southern_us": 0.0, "filipino": 0.0, "vietnamese": 0.0, "british": 0.0, "greek": 0.0, "indian": 50.0, "jamaican": 0.0, "brazilian": 0.0, "cajun_creole": 0.0, "korean": 0.0, "italian": 0.0};
 
 var testRecipe = [
     {
@@ -159,20 +157,6 @@ function findLocation() {
 
 
     addRecipes(recipe);
-    $.ajax({
-        type:'POST',
-        url: '/recipe',
-        data: {recipe_name: recipe},
-        success: function(data) {
-
-            console.log(data);
-       },
-        error: function (xhr) {
-            console.log(xhr.status + ": " + xhr.responseText);
-       }
-
-    });
-
     var ll = null;
 
     /* Convert location into coordinates and retrieve restaurants */
@@ -194,23 +178,30 @@ function findLocation() {
                 position: latlng
             });
 
-            console.log(marker);
-
             // Set the default red Icon
             marker.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
 
             // Push marker to array
             markersArray.push(marker);
 
-            console.log(markersArray);
-
-            /* Marker listener */
+            // Marker listener
             marker.addListener('click', function() {
                 infoWindow.setContent('You');
                 infoWindow.open(map,marker);
             });
 
-            findRestaurants(ll, determineCuisines(testCuisine));
+            // Determine cuisine for recipe
+            $.ajax({
+                type:'POST',
+                url: '/cuisine',
+                data: {recipe_name: recipe},
+                success: function(data) {
+                    findRestaurants(ll, determineCuisines(data));
+                },
+                error: function (xhr) {
+                    console.log(xhr.status + ": " + xhr.responseText);
+                }
+            });
 
         } else {
 
@@ -231,15 +222,16 @@ function determineCuisines(recipe)
 {
     var cuisines = "";
 
-    for (var key in recipe){
-        var attrValue = recipe[key];
+    for (var i in recipe){
 
-        if(attrValue >= 0.25)
-            cuisines = cuisines + restaurantIds[key] + ",";
+        var cuisine = recipe[i].cuisine;
+        var value = recipe[i].value;
+
+        if(value >= 150)
+            cuisines = cuisines + restaurantIds[cuisine] + ",";
     }
 
     cuisines = cuisines.slice(0, -1);
-
     return cuisines;
 }
 
@@ -250,7 +242,7 @@ function findRestaurants(location, cuisine) {
         url: 'https://api.foursquare.com/v2/venues/search',
         data: {client_id: fourSquareKey, client_secret: fourSquareId, ll: location,
             v:'20161130', categoryId: cuisine, intent: 'browse',
-            radius: 5000},
+            radius: 3000},
         success: function(data) {
 
 
@@ -375,17 +367,30 @@ function addRecipes(name) {
     var recipe = "recipe-row-";
     var recipeId;
     for(var i = 0; i < testRecipe.length; i++) {
-        if(i % 3 == 0)
-        {
+
             id = id + 1;
             recipeId = recipe + id;
             $('#recipe-container').append('<div class="row recipe-row" id="' + recipeId + '"></div>');
-        }
 
-        $('#' + recipeId).append('<div class="col-lg-4">' +
-                                    '<a href="#"><img class="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" width="140" height="140"></a>' +
+
+        $('#' + recipeId).append('<div class="col-lg-12 center-block text-center">' +
+                                    '<a href="#"><img class="img-circle" src="/static/pictures/recipe_pic/roast pepper pesto pasta.jpg" alt="Generic placeholder image" width="250" height="250"></a>' +
                                     '<h2>' + name + '</h2>' +
                                     '<p>Recipe Information</p>' +
                                     '</div>');
     }
+}
+
+function getTopN(arr, prop, n) {
+    // clone before sorting, to preserve the original array
+    var clone = arr.slice(0);
+
+    // sort descending
+    clone.sort(function(x, y) {
+        if (x[prop] == y[prop]) return 0;
+        else if (parseInt(x[prop]) < parseInt(y[prop])) return 1;
+        else return -1;
+    });
+
+    return clone.slice(0, n || 1);
 }
