@@ -33,65 +33,6 @@ restaurantIds['cajun_creole'] = '4bf58dd8d48988d17a941735';
 restaurantIds['korean'] = '4bf58dd8d48988d113941735';
 restaurantIds['italian'] = '4bf58dd8d48988d110941735';
 
-var testRecipe = [
-    {
-        "id": "id1",
-        "name": "Fish and Chips",
-        "ingredients": ["aa", "AA"],
-        "healthy": 0.2,
-        "img": "path to img"
-    },
-    {
-        "id": "id2",
-        "name": "Fish and Chips",
-        "ingredients": ["aa", "AA"],
-        "healthy": 0.2,
-        "img": "path to img"
-    },
-    {
-        "id": "id3",
-        "name": "Fish and Chips",
-        "ingredients": ["aa", "AA"],
-        "healthy": 0.2,
-        "img": "path to img"
-    },
-    {
-        "id": "id4",
-        "name": "Fish and Chips",
-        "ingredients": ["aa", "AA"],
-        "healthy": 0.2,
-        "img": "path to img"
-    },
-    {
-        "id": "id5",
-        "name": "Fish and Chips",
-        "ingredients": ["aa", "AA"],
-        "healthy": 0.2,
-        "img": "path to img"
-    },
-    {
-        "id": "id6",
-        "name": "Fish and Chips",
-        "ingredients": ["aa", "AA"],
-        "healthy": 0.2,
-        "img": "path to img"
-    },
-    {
-        "id": "id7",
-        "name": "Fish and Chips",
-        "ingredients": ["aa", "AA"],
-        "healthy": 0.2,
-        "img": "path to img"
-    },
-    {
-        "id": "id8",
-        "name": "Fish and Chips",
-        "ingredients": ["aa", "AA"],
-        "healthy": 0.2,
-        "img": "path to img"
-    }
-];
-
 (function($) {
     "use strict"; // Start of use strict
 
@@ -379,21 +320,21 @@ function addRecipes(recipes) {
     $('.recipe-img').empty();
 
     $('#a-class').append('<a href="' + a_class['url'] + '" target="_blank">' +
-        '<img class="img-circle backup_picture" src="/static/pictures/recipe_pic/' +
+        '<img class="loading img-circle backup_picture" src="/static/pictures/recipe_pic/' +
         a_class['name'] + '.jpg" width="200" height="200"></a>' +
         '<h2>' + a_class['name'] + '</h2>' +
         '<p><a class="btn btn-default" href="' + a_class['url'] +
         '" target="_blank" role="button">View details &raquo;</a></p>');
 
     $('#b-class1').append('<a href="' + b_class1['url'] + '" target="_blank">' +
-        '<img class="img-circle backup_picture" src="/static/pictures/recipe_pic/' +
+        '<img class="loading img-circle backup_picture" src="/static/pictures/recipe_pic/' +
         b_class1['name'] + '.jpg" width="150" height="150"></a>' +
         '<h4>' + b_class1['name'] + '</h4>' +
         '<p><a class="btn btn-default" href="' + b_class1['url'] +
         '" target="_blank" role="button">View details &raquo;</a></p>');
 
     $('#b-class2').append('<a href="' + b_class2['url'] + '" target="_blank">' +
-        '<img class="img-circle backup_picture" src="/static/pictures/recipe_pic/' +
+        '<img class="loading img-circle backup_picture" src="/static/pictures/recipe_pic/' +
         b_class2['name'] + '.jpg" width="150" height="150"></a>' +
         '<h4>' + b_class2['name'] + '</h4>' +
         '<p><a class="btn btn-default" href="' + b_class2['url'] +

@@ -230,3 +230,7 @@ section h2.section-heading {
   margin-right: 10px;
   margin-left: 10px;
 }
+
+.loading {
+  background: transparent url('/static/img/ajax-loader.gif') center no-repeat;
+}
