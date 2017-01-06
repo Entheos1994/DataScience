@@ -234,3 +234,7 @@ section h2.section-heading {
 .loading {
   background: transparent url('/static/img/ajax-loader.gif') center no-repeat;
 }
+
+body.modal-open {
+    overflow: visible;
+}

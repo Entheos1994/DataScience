@@ -292,6 +292,10 @@ function addToList(place, marker) {
     });
 }
 
+String.prototype.capitalize = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+}
+
 /**
  * Remove all markers from the map and clear the list of restaurants
  */
@@ -323,25 +327,59 @@ function addRecipes(recipes) {
         '<img class="loading img-circle backup_picture" src="/static/pictures/recipe_pic/' +
         a_class['name'] + '.jpg" width="200" height="200"></a>' +
         '<h2>' + a_class['name'] + '</h2>' +
-        '<p><a class="btn btn-default" href="' + a_class['url'] +
-        '" target="_blank" role="button">View details &raquo;</a></p>');
+        '<p><a class="btn btn-default" href="#" id="recipe-button1" role="button">View details &raquo;</a></p>');
+
+    $('#recipe-button1').on('click', function (a){
+        $('#recipeModalTitle').text(a_class['name'].capitalize());
+        $('#recipeModalBody').empty();
+        $('#recipeModalBody').append(a_class['list_ingredients']);
+        $('#recipeModalBody').append(a_class['method']);
+
+        $('#recipeModal').modal({backdrop: 'static', keyboard: false });
+        $('#recipeModal').modal('show');
+
+        console.log(a_class);
+    });
 
     $('#b-class1').append('<a href="' + b_class1['url'] + '" target="_blank">' +
         '<img class="loading img-circle backup_picture" src="/static/pictures/recipe_pic/' +
         b_class1['name'] + '.jpg" width="150" height="150"></a>' +
         '<h4>' + b_class1['name'] + '</h4>' +
-        '<p><a class="btn btn-default" href="' + b_class1['url'] +
-        '" target="_blank" role="button">View details &raquo;</a></p>');
+        '<p><a class="btn btn-default" href="#" id="recipe-button2" role="button">View details &raquo;</a></p>');
+
+    $('#recipe-button2').on('click', function (a){
+        $('#recipeModalTitle').text(b_class1['name'].capitalize());
+        $('#recipeModalBody').empty();
+        $('#recipeModalBody').append(b_class1['list_ingredients']);
+        $('#recipeModalBody').append(b_class1['method']);
+
+        $('#recipeModal').modal({backdrop: 'static', keyboard: false });
+        $('#recipeModal').modal('show');
+    });
 
     $('#b-class2').append('<a href="' + b_class2['url'] + '" target="_blank">' +
         '<img class="loading img-circle backup_picture" src="/static/pictures/recipe_pic/' +
         b_class2['name'] + '.jpg" width="150" height="150"></a>' +
         '<h4>' + b_class2['name'] + '</h4>' +
-        '<p><a class="btn btn-default" href="' + b_class2['url'] +
-        '" target="_blank" role="button">View details &raquo;</a></p>');
+        '<p><a class="btn btn-default" href="#" id="recipe-button3" role="button">View details &raquo;</a></p>');
+
+    $('#recipe-button3').on('click', function (a){
+        $('#recipeModalTitle').text(b_class2['name'].capitalize());
+        $('#recipeModalBody').empty();
+        $('#recipeModalBody').append(b_class2['list_ingredients']);
+        $('#recipeModalBody').append(b_class2['method']);
+
+        $('#recipeModal').modal({backdrop: 'static', keyboard: false });
+        $('#recipeModal').modal('show');
+    });
 
     $(".backup_picture").on("error", function(){
         $(this).attr('src', '/static/pictures/recipe_pic/healthy-substitute.jpg');
     });
 
+}
+
+function displayRecipe(recipe) {
+
+    console.log(recipe);
 }
