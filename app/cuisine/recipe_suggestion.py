@@ -1,17 +1,38 @@
 from pymongo import MongoClient
 from bson import json_util
+import os
+import json
+from fuzzywuzzy import process
+import random
+
+from collections import Counter
+
 
 client = MongoClient('localhost', 27017)
 db=client.test
-def get_recipe(recipe_name):
-    recipe_name = recipe_name.lstrip(' ')
-    recipe_name = recipe_name.rstrip(' ')
-    recipe_name = recipe_name.capitalize()
+
+APP_ROOT = os.path.dirname(os.path.abspath(__file__))
+DIRECTORY = os.path.join(APP_ROOT)
+
+recipe_list = json.load(open(DIRECTORY + '/'+'recipe_name.json','r'))
+def get_recipe(user_input):
+    user_input = user_input.lstrip(' ')
+    user_input = user_input.rstrip(' ')
+    user_input = user_input.capitalize()
+
+    if db.bbc.find_one({'name':user_input}):
+        bbc_food = db.bbc.find_one({'name':user_input})
+    else:
+        recipe = process.extract(user_input, recipe_list)
+        possible_recipe = [x[0] for x in recipe]
+        random_recipe = random.choice(possible_recipe)
+        recipe_name = random_recipe
+        bbc_food = db.bbc.find_one({'name':recipe_name})
 
 
 
 
-    bbc_food = db.bbc.find_one({'name':recipe_name}) # find the document of the recipe
+    #bbc_food = db.bbc.find_one({'name':recipe_name}) # find the document of the recipe
     ingre = bbc_food.get('ingredients') #obtain the ingredients of the recipe
     Rank=db.Rank.find_one()
 
