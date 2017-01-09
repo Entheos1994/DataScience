@@ -4,6 +4,13 @@ from bson import json_util
 client = MongoClient('localhost', 27017)
 db=client.test
 def get_recipe(recipe_name):
+    recipe_name = recipe_name.lstrip(' ')
+    recipe_name = recipe_name.rstrip(' ')
+    recipe_name = recipe_name.capitalize()
+
+
+
+
     bbc_food = db.bbc.find_one({'name':recipe_name}) # find the document of the recipe
     ingre = bbc_food.get('ingredients') #obtain the ingredients of the recipe
     Rank=db.Rank.find_one()
