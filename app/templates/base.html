@@ -28,7 +28,7 @@
     {% block header %}{% endblock %}
     {% block healthy %}{% endblock %}
     {% block restaurant %}{% endblock %}
-    {% block recipe_modal %}{% endblock %}
+
 
     <!-- jQuery -->
     <script src="/static/js/jquery.min.js"></script>
@@ -45,5 +45,5 @@
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCy8BG544uiGRZRC72z1OzfH19dnrAoA1k&libraries=places&callback=initMap"></script>
 
 </body>
-
+{% block recipe_modal %}{% endblock %}
 </html>

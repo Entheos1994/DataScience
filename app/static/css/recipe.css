@@ -3,6 +3,12 @@ body {
   font-family: "Roboto Slab", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
+body.modal-open {
+  overflow: visible;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
 a {
   color: #fed136;
 }
@@ -235,6 +241,13 @@ section h2.section-heading {
   background: transparent url('/static/img/ajax-loader.gif') center no-repeat;
 }
 
-body.modal-open {
-    overflow: visible;
+
+.recipe-ingredients__heading {
+  text-align:center;
+  font-family: "Montserrat", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.recipe-ingredients__sub-heading {
+  font-family: "Montserrat", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  text-transform: none;
 }

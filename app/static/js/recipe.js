@@ -337,6 +337,8 @@ function addRecipes(recipes) {
 
         $('#recipeModal').modal({backdrop: 'static', keyboard: false });
         $('#recipeModal').modal('show');
+        $('#recipeModal .recipe-ingredients__link').contents().unwrap();
+        $('#recipeModal .recipe-method__list').before('<h2 class="recipe-ingredients__heading">Method</h2>');
 
         console.log(a_class);
     });
@@ -355,6 +357,8 @@ function addRecipes(recipes) {
 
         $('#recipeModal').modal({backdrop: 'static', keyboard: false });
         $('#recipeModal').modal('show');
+        $('#recipeModal .recipe-ingredients__link').contents().unwrap();
+        $('#recipeModal .recipe-method__list').before('<h2 class="recipe-ingredients__heading">Method</h2>');
     });
 
     $('#b-class2').append('<a href="' + b_class2['url'] + '" target="_blank">' +
@@ -371,6 +375,8 @@ function addRecipes(recipes) {
 
         $('#recipeModal').modal({backdrop: 'static', keyboard: false });
         $('#recipeModal').modal('show');
+        $('#recipeModal .recipe-ingredients__link').contents().unwrap();
+        $('#recipeModal .recipe-method__list').before('<h2 class="recipe-ingredients__heading">Method</h2>');
     });
 
     $(".backup_picture").on("error", function(){
