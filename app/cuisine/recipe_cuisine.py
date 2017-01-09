@@ -19,12 +19,14 @@ client = MongoClient('localhost', 27017)
 db=client.test
 bbc = db.bbc
 
+
+
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 DIRECTORY = os.path.join(APP_ROOT)
 
-recipe_list = json.load(open(DIRECTORY + '\\recipe_name.json','r'))
-probability = json.load(open(DIRECTORY + '\\probability_update.json', 'r'))
-ingred_count = json.load(open(DIRECTORY + '\\ingred_count.json', 'r'))
+recipe_list = json.load(open(DIRECTORY + '/'+'recipe_name.json','r'))
+probability = json.load(open(DIRECTORY + '/'+'probability_update.json', 'r'))
+ingred_count = json.load(open(DIRECTORY + '/'+'ingred_count.json', 'r'))
 #ingred_count = json.load(open('ingred_count.json', 'r'))
 
 #weight = json.load(open('cuisine/ingred_weight.json','r'))
