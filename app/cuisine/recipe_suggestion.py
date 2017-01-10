@@ -78,9 +78,9 @@ def get_recipe(user_input):
     No_ingre=[]
     #  delete the ingre which is the same as different level
     for i in range(2,len(level_divided)):
-
-        list(set(level_divided[i])-set(level_divided[6]))
-        level_divided[i] = list(set(level_divided[i])-set(level_divided[6]))
+        print(len(level_divided))
+        #list(set(level_divided[i])-set(level_divided[len(level_divided)]))
+        level_divided[i] = list(set(level_divided[i])-set(level_divided[len(level_divided)]))
         if level_divided[i] == []:
             del level_divided[i]
 
