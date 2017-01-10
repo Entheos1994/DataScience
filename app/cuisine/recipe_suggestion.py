@@ -89,6 +89,7 @@ def get_recipe(user_input):
 
 
     No_ingre=[]
+<<<<<<< HEAD
     # delete the ingre which is the same as different level
     new_divided = {}
     for i in range(2,len(level_divided)+1):
@@ -99,6 +100,71 @@ def get_recipe(user_input):
             new_divided[i] = list(set(level_divided[i])-set(level_divided[i+1]))
         else:
             new_divided[i] = level_divided[i]
+=======
+    #  delete the ingre which is the same as different level
+    for i in range(2,len(level_divided)):
+        print(len(level_divided))
+        #list(set(level_divided[i])-set(level_divided[len(level_divided)]))
+        level_divided[i] = list(set(level_divided[i])-set(level_divided[len(level_divided)]))
+        if level_divided[i] == []:
+            del level_divided[i]
+
+
+    for key in level_divided:
+        No_ingre.append(key)
+    print(No_ingre)
+
+    #print(level_divided) # the recipe name in each class
+    print(level)  #numbrecipe the overlaper of
+
+    No_Hrecipe_overlap = len(level)-1 # the level of overlap
+
+    match_rate_A = No_ingre[-2]/len(ing)
+    match_rate_B = No_ingre[-3]/len(ing)
+    Hrecipe_overlap = ing[0:No_ingre[-2]-1]
+    Hrecipe_overlapB = ing[0:No_ingre[-3] - 1]
+    R_name_A = (level_divided[No_ingre[-2]])  #Recipe names in A class
+    R_name_B = (level_divided[No_ingre[-3]]) #recipe name in B class
+
+    score_A = {}
+    score_B = {}
+    score = {}
+    if len(R_name_A)>=3:
+        for i in R_name_A:
+
+            bbc_food = db.bbcHealthy.find_one({'name': i})  # find the document of the recipe
+
+            ingre1 = bbc_food.get('ingredients')  # obtain the ingredients of the recipe
+
+            Remain_recipe = list((set(ingre1))-set(Hrecipe_overlap)) # the ingredient which do not include the health recipe
+
+            Remain_recipe_withR = {key: Rank[key] for key in Rank.keys() & Remain_recipe}
+            sum(Remain_recipe_withR.values())
+
+            score_A[i]= sum(Remain_recipe_withR.values())
+        score_A = sorted(score_A.items(), key=lambda d: d[1], reverse=True)
+        score_A = dict(score_A[0:3])
+        result = {}
+        result['A-Class'] = {"Matching Rate":match_rate_A}
+        result['A-Class'].update(score_A)
+        print(result)
+        for key in score_A:
+                         print (db.bbcHealthy.find_one({'name':key}))
+
+
+    else:
+        for i in R_name_A:
+
+            bbc_food = db.bbcHealthy.find_one({'name': i})  # find the document of the recipe
+
+            ingre1 = bbc_food.get('ingredients')  # obtain the ingredients of the recipe
+
+            Remain_recipe = list((set(ingre1))-set(Hrecipe_overlap)) # the ingredient which do not include the health recipe
+
+            Remain_recipe_withR = {key: Rank[key] for key in Rank.keys() & Remain_recipe}
+
+            # print(sum(Remain_recipe_withR.values()))
+>>>>>>> master
 
 
 
