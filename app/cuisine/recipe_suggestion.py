@@ -89,7 +89,6 @@ def get_recipe(user_input):
 
 
     No_ingre=[]
-<<<<<<< HEAD
     # delete the ingre which is the same as different level
     new_divided = {}
     for i in range(2,len(level_divided)+1):
@@ -100,7 +99,6 @@ def get_recipe(user_input):
             new_divided[i] = list(set(level_divided[i])-set(level_divided[i+1]))
         else:
             new_divided[i] = level_divided[i]
-=======
     #  delete the ingre which is the same as different level
     for i in range(2,len(level_divided)):
         print(len(level_divided))
@@ -164,7 +162,6 @@ def get_recipe(user_input):
             Remain_recipe_withR = {key: Rank[key] for key in Rank.keys() & Remain_recipe}
 
             # print(sum(Remain_recipe_withR.values()))
->>>>>>> master
 
 
 
@@ -212,22 +209,6 @@ def get_recipe(user_input):
     ingList.append({'B-Class':db.bbcHealthy.find_one({'name': str(B_class[1])})})
     B_class = outputClass.pop(0)
     ingList.append({'B-Class':db.bbcHealthy.find_one({'name': str(B_class[1])})})
-
-    # score_B = sorted(score_B.items(), key=lambda d: d[1], reverse=True)
-    #
-    # score_B = dict(score_B[0:(3 - level[-2])])
-    #
-    # # print the result
-    # result = {}
-    # result['B-Class'] = {"Matching Rate": match_rate_B}
-    # result['B-Class'].update(score_B)
-    # result['A-Class'] = {"Matching Rate": match_rate_A}
-    # result['A-Class'].update(score_A)
-    # print(result)
-    #
-    # ingList = []
-
-
 
 
     return json_util.dumps(ingList)
