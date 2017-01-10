@@ -33,11 +33,11 @@ restaurantIds['cajun_creole'] = '4bf58dd8d48988d17a941735';
 restaurantIds['korean'] = '4bf58dd8d48988d113941735';
 restaurantIds['italian'] = '4bf58dd8d48988d110941735';
 
-(function($) {
+(function ($) {
     "use strict"; // Start of use strict
 
     // jQuery for page scrolling feature - requires jQuery Easing plugin
-    $('a.page-scroll').bind('click', function(event) {
+    $('a.page-scroll').bind('click', function (event) {
         var $anchor = $(this);
         $('html, body').stop().animate({
             scrollTop: ($($anchor.attr('href')).offset().top - 50)
@@ -52,8 +52,8 @@ restaurantIds['italian'] = '4bf58dd8d48988d110941735';
     });
 
     // Closes the Responsive Menu on Menu Item Click
-    $('.navbar-collapse ul li a').click(function(){ 
-            $('.navbar-toggle:visible').click();
+    $('.navbar-collapse ul li a').click(function () {
+        $('.navbar-toggle:visible').click();
     });
 
     // Offset for Main Navigation
@@ -64,7 +64,7 @@ restaurantIds['italian'] = '4bf58dd8d48988d110941735';
     });
 
     $('.list-group-item').hover();
-    
+
 })(jQuery); // End of use strict
 
 /**
@@ -97,28 +97,28 @@ function findLocation() {
     var recipe = document.getElementById("recipe-entry").value;
 
     $.ajax({
-                type:'POST',
-                url: '/recipe',
-                data: {recipe_name: recipe},
-                success: function(data) {
-                    addRecipes(data);
-                },
-                error: function (xhr) {
-                    console.log(xhr.status + ": " + xhr.responseText);
-                }
-            });
+        type: 'POST',
+        url: '/recipe',
+        data: {recipe_name: recipe},
+        success: function (data) {
+            addRecipes(data);
+        },
+        error: function (xhr) {
+            console.log(xhr.status + ": " + xhr.responseText);
+        }
+    });
 
     var ll = null;
 
     /* Convert location into coordinates and retrieve restaurants */
-    geocoder.geocode( {'address': location}, function(results, status) {
+    geocoder.geocode({'address': location}, function (results, status) {
         if (status == 'OK') {
             console.log(results);
 
             var latitude = results[0].geometry.location.lat();
             var longitude = results[0].geometry.location.lng();
             var latlng = {lat: latitude, lng: longitude};
-            ll = latitude.toFixed(2)+ ',' + longitude.toFixed(2);
+            ll = latitude.toFixed(2) + ',' + longitude.toFixed(2);
 
             /* Clear the previous markers */
             clearMarkers();
@@ -136,17 +136,17 @@ function findLocation() {
             markersArray.push(marker);
 
             // Marker listener
-            marker.addListener('click', function() {
+            marker.addListener('click', function () {
                 infoWindow.setContent('You');
-                infoWindow.open(map,marker);
+                infoWindow.open(map, marker);
             });
 
             // Determine cuisine for recipe
             $.ajax({
-                type:'POST',
+                type: 'POST',
                 url: '/cuisine',
                 data: {recipe_name: recipe},
-                success: function(data) {
+                success: function (data) {
                     findRestaurants(ll, determineCuisines(data));
                 },
                 error: function (xhr) {
@@ -169,16 +169,15 @@ function findLocation() {
  * @param recipe JSON containing cuisine percentages
  * @returns {string} Restaurant categories from fourspace
  */
-function determineCuisines(recipe)
-{
+function determineCuisines(recipe) {
     var cuisines = "";
 
-    for (var i in recipe){
+    for (var i in recipe) {
 
         var cuisine = recipe[i].cuisine;
         var value = recipe[i].value;
 
-        if(value >= 150)
+        if (value >= 150)
             cuisines = cuisines + restaurantIds[cuisine] + ",";
     }
 
@@ -189,18 +188,20 @@ function determineCuisines(recipe)
 function findRestaurants(location, cuisine) {
     /* Rest request to get restaurant information based on user's query */
     $.ajax({
-        type:'get',
+        type: 'get',
         url: 'https://api.foursquare.com/v2/venues/search',
-        data: {client_id: fourSquareKey, client_secret: fourSquareId, ll: location,
-            v:'20161130', categoryId: cuisine, intent: 'browse',
-            radius: 3000},
-        success: function(data) {
+        data: {
+            client_id: fourSquareKey, client_secret: fourSquareId, ll: location,
+            v: '20161130', categoryId: cuisine, intent: 'browse',
+            radius: 3000
+        },
+        success: function (data) {
 
 
 
             /* Place markers on the map */
             var venues = data.response.venues;
-            for(var i = 0; i < venues.length; i++)
+            for (var i = 0; i < venues.length; i++)
                 createMarker(venues[i]);
 
             /* Set the map boundaries */
@@ -241,9 +242,9 @@ function createMarker(place) {
     markersArray.push(marker);
 
     /* Marker listener */
-    marker.addListener('click', function() {
+    marker.addListener('click', function () {
         infoWindow.setContent(place.name);
-        infoWindow.open(map,marker);
+        infoWindow.open(map, marker);
     });
 
     /* Add restaurant information to list beside map */
@@ -266,33 +267,33 @@ function addToList(place, marker) {
     var formattedAddress = place['location'].formattedAddress;
 
     /* Don't display information if it doesn't exists */
-    if(phone === undefined)
+    if (phone === undefined)
         phone = '';
 
     /* Remove http:// from url */
-    if(url === 'undefined')
+    if (url === 'undefined')
         url = '';
     else
         url = url.substring(7);
 
     /* Create address string */
     var address = "";
-    for(var i = 0; i < formattedAddress.length-1; i++)
+    for (var i = 0; i < formattedAddress.length - 1; i++)
         address = address + formattedAddress[i] + ", ";
 
     /* Remove last comma and space from address */
-    address = address.substring(0, address.length-2);
+    address = address.substring(0, address.length - 2);
 
     $('.list-group').append('<div><button class="list-group-item list-group-item-action restaurant-list" id="' + id + '"><h4>' + name
         + '</h4><p class="restaurant-info">' + address + '</p><p class="restaurant-info">' + url + '</p><p class="restaurant-info">' + phone + '</p></button></div>');
-    $('#' + id).hover(function() {
+    $('#' + id).hover(function () {
         marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png')
-    }, function() {
+    }, function () {
         marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png')
     });
 }
 
-String.prototype.capitalize = function() {
+String.prototype.capitalize = function () {
     return this.charAt(0).toUpperCase() + this.slice(1);
 }
 
@@ -302,7 +303,7 @@ String.prototype.capitalize = function() {
 function clearMarkers() {
 
     // Remove markers from the map
-    for(var i = 0; i < markersArray.length; i++) {
+    for (var i = 0; i < markersArray.length; i++) {
         markersArray[i].setMap(null);
     }
 
@@ -324,62 +325,48 @@ function addRecipes(recipes) {
     $('.recipe-img').empty();
 
     $('#a-class').append('<a href="' + a_class['url'] + '" target="_blank">' +
-        '<img class="loading img-circle backup_picture" src="/static/pictures/recipe_pic/' +
+        '<img id="recipe-image1" class="loading img-circle backup_picture" src="/static/pictures/recipe_pic/' +
         a_class['name'] + '.jpg" width="200" height="200"></a>' +
         '<h2>' + a_class['name'] + '</h2>' +
         '<p><a class="btn btn-default" href="#" id="recipe-button1" role="button">View details &raquo;</a></p>');
 
-    $('#recipe-button1').on('click', function (a){
-        $('#recipeModalTitle').text(a_class['name'].capitalize());
-        $('#recipeModalBody').empty();
-        $('#recipeModalBody').append(a_class['list_ingredients']);
-        $('#recipeModalBody').append(a_class['method']);
+    $('#recipe-button1').on('click', function (a) {
+        showRecipe(1, a_class);
+    });
 
-        $('#recipeModal').modal({backdrop: 'static', keyboard: false });
-        $('#recipeModal').modal('show');
-        $('#recipeModal .recipe-ingredients__link').contents().unwrap();
-        $('#recipeModal .recipe-method__list').before('<h2 class="recipe-ingredients__heading">Method</h2>');
-
-        console.log(a_class);
+    $('#recipe-image1').on('click', function (a) {
+        showRecipe(1, a_class);
     });
 
     $('#b-class1').append('<a href="' + b_class1['url'] + '" target="_blank">' +
-        '<img class="loading img-circle backup_picture" src="/static/pictures/recipe_pic/' +
+        '<img id="recipe-image2" class="loading img-circle backup_picture" src="/static/pictures/recipe_pic/' +
         b_class1['name'] + '.jpg" width="150" height="150"></a>' +
         '<h4>' + b_class1['name'] + '</h4>' +
         '<p><a class="btn btn-default" href="#" id="recipe-button2" role="button">View details &raquo;</a></p>');
 
-    $('#recipe-button2').on('click', function (a){
-        $('#recipeModalTitle').text(b_class1['name'].capitalize());
-        $('#recipeModalBody').empty();
-        $('#recipeModalBody').append(b_class1['list_ingredients']);
-        $('#recipeModalBody').append(b_class1['method']);
+    $('#recipe-button2').on('click', function (a) {
+        showRecipe(b_class1);
+    });
 
-        $('#recipeModal').modal({backdrop: 'static', keyboard: false });
-        $('#recipeModal').modal('show');
-        $('#recipeModal .recipe-ingredients__link').contents().unwrap();
-        $('#recipeModal .recipe-method__list').before('<h2 class="recipe-ingredients__heading">Method</h2>');
+    $('#recipe-image2').on('click', function (a) {
+        showRecipe(b_class1)
     });
 
     $('#b-class2').append('<a href="' + b_class2['url'] + '" target="_blank">' +
-        '<img class="loading img-circle backup_picture" src="/static/pictures/recipe_pic/' +
+        '<img id="recipe-image3" class="loading img-circle backup_picture" src="/static/pictures/recipe_pic/' +
         b_class2['name'] + '.jpg" width="150" height="150"></a>' +
         '<h4>' + b_class2['name'] + '</h4>' +
         '<p><a class="btn btn-default" href="#" id="recipe-button3" role="button">View details &raquo;</a></p>');
 
-    $('#recipe-button3').on('click', function (a){
-        $('#recipeModalTitle').text(b_class2['name'].capitalize());
-        $('#recipeModalBody').empty();
-        $('#recipeModalBody').append(b_class2['list_ingredients']);
-        $('#recipeModalBody').append(b_class2['method']);
-
-        $('#recipeModal').modal({backdrop: 'static', keyboard: false });
-        $('#recipeModal').modal('show');
-        $('#recipeModal .recipe-ingredients__link').contents().unwrap();
-        $('#recipeModal .recipe-method__list').before('<h2 class="recipe-ingredients__heading">Method</h2>');
+    $('#recipe-button3').on('click', function (a) {
+        showRecipe(b_class2);
     });
 
-    $(".backup_picture").on("error", function(){
+    $('#recipe-image3').on('click', function (a) {
+        showRecipe(b_class2);
+    });
+
+    $(".backup_picture").on("error", function () {
         $(this).attr('src', '/static/pictures/recipe_pic/healthy-substitute.jpg');
     });
 
@@ -388,4 +375,18 @@ function addRecipes(recipes) {
 function displayRecipe(recipe) {
 
     console.log(recipe);
+}
+
+function showRecipe(recipe) {
+    $('#recipeModalTitle').text(recipe['name'].capitalize());
+    $('#recipeModalBody').empty();
+    $('#recipeModalBody').append(recipe['list_ingredients']);
+    $('#recipeModalBody').append(recipe['method']);
+
+    $('#recipeModal').modal({backdrop: 'static', keyboard: false});
+    $('#recipeModal').modal('show');
+    $('#recipeModal .recipe-ingredients__link').contents().unwrap();
+    $('#recipeModal .recipe-method__list').before('<h2 class="recipe-ingredients__heading">Method</h2>');
+
+
 }

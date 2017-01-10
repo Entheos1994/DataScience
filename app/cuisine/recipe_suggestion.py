@@ -73,17 +73,33 @@ def get_recipe(user_input):
             del Hrecipe2[:] #clear the list
         else:
             break
+
+
+    No_ingre=[]
+    #  delete the ingre which is the same as different level
+    for i in range(2,len(level_divided)):
+
+        list(set(level_divided[i])-set(level_divided[6]))
+        level_divided[i] = list(set(level_divided[i])-set(level_divided[6]))
+        if level_divided[i] == []:
+            del level_divided[i]
+
+
+    for key in level_divided:
+        No_ingre.append(key)
+    print(No_ingre)
+
     #print(level_divided) # the recipe name in each class
     print(level)  #numbrecipe the overlaper of
 
-    No_Hrecipe_overlap = level.index(level[-2])+1 # the level of overlap
+    No_Hrecipe_overlap = len(level)-1 # the level of overlap
 
-    match_rate_A = No_Hrecipe_overlap/len(ing)
-    match_rate_B = (No_Hrecipe_overlap-1)/len(ing)
-    Hrecipe_overlap = ing[0:No_Hrecipe_overlap]
-
-    R_name_A = (level_divided[No_Hrecipe_overlap])  #Recipe names in A class
-    R_name_B = (level_divided[No_Hrecipe_overlap-1]) #recipe name in B class
+    match_rate_A = No_ingre[-2]/len(ing)
+    match_rate_B = No_ingre[-3]/len(ing)
+    Hrecipe_overlap = ing[0:No_ingre[-2]-1]
+    Hrecipe_overlapB = ing[0:No_ingre[-3] - 1]
+    R_name_A = (level_divided[No_ingre[-2]])  #Recipe names in A class
+    R_name_B = (level_divided[No_ingre[-3]]) #recipe name in B class
 
     score_A = {}
     score_B = {}
@@ -135,7 +151,7 @@ def get_recipe(user_input):
 
             ingre1 = bbc_food.get('ingredients')  # obtain the ingredients of the recipe
 
-            Remain_recipe = list((set(ingre1)) - set(Hrecipe_overlap))  # the ingredient which do not include the health recipe
+            Remain_recipe = list((set(ingre1)) - set(Hrecipe_overlapB))  # the ingredient which do not include the health recipe
             # print(Remain_recipe)
             Remain_recipe_withR = {key: Rank[key] for key in Rank.keys() & Remain_recipe}
             #print(sum(Remain_recipe_withR.values()))
