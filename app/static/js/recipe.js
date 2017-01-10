@@ -86,7 +86,6 @@ function initMap() {
     infoWindow = new google.maps.InfoWindow();
 }
 
-
 /**
  * Convert the location the user entered into coordinates to search restaurants using Google Places.
  */
@@ -96,15 +95,13 @@ function findLocation() {
     var location = document.getElementById("location-entry").value;
     var recipe = document.getElementById("recipe-entry").value;
 
+    /* Get healthy recipe information from server */
     $.ajax({
         type: 'POST',
         url: '/recipe',
         data: {recipe_name: recipe},
         success: function (data) {
             addRecipes(data);
-        },
-        error: function (xhr) {
-            console.log(xhr.status + ": " + xhr.responseText);
         }
     });
 
@@ -148,9 +145,6 @@ function findLocation() {
                 data: {recipe_name: recipe},
                 success: function (data) {
                     findRestaurants(ll, determineCuisines(data));
-                },
-                error: function (xhr) {
-                    console.log(xhr.status + ": " + xhr.responseText);
                 }
             });
 
@@ -172,6 +166,7 @@ function findLocation() {
 function determineCuisines(recipe) {
     var cuisines = "";
 
+    /* Determine which cuisines to show */
     for (var i in recipe) {
 
         var cuisine = recipe[i].cuisine;
@@ -197,8 +192,6 @@ function findRestaurants(location, cuisine) {
         },
         success: function (data) {
 
-
-
             /* Place markers on the map */
             var venues = data.response.venues;
             for (var i = 0; i < venues.length; i++)
@@ -218,7 +211,6 @@ function findRestaurants(location, cuisine) {
             $("#error-body").text('Restaurant search was not successful for the following reason: ' + xhr.status);
             $('#modal-error').modal('show')
         }
-
     });
 }
 
@@ -250,7 +242,6 @@ function createMarker(place) {
     /* Add restaurant information to list beside map */
     addToList(place, marker);
 }
-
 
 /**
  * Add restaurant information to list beside the map
@@ -295,7 +286,7 @@ function addToList(place, marker) {
 
 String.prototype.capitalize = function () {
     return this.charAt(0).toUpperCase() + this.slice(1);
-}
+};
 
 /**
  * Remove all markers from the map and clear the list of restaurants
@@ -317,52 +308,48 @@ function clearMarkers() {
 function addRecipes(recipes) {
 
     /* Remove previous recipes */
-    console.log(recipes);
     var a_class = recipes[0]['A-Class'];
     var b_class1 = recipes[1]['B-Class'];
     var b_class2 = recipes[2]['B-Class'];
 
     $('.recipe-img').empty();
 
-    $('#a-class').append('<a href="' + a_class['url'] + '" target="_blank">' +
-        '<img id="recipe-image1" class="loading img-circle backup_picture" src="/static/pictures/recipe_pic/' +
-        a_class['name'] + '.jpg" width="200" height="200"></a>' +
+    $('#a-class').append('<img id="recipe-image1" class="loading img-circle backup_picture"' +
+        'src="/static/pictures/recipe_pic/' + a_class['name'] + '.jpg" width="200" height="200">' +
         '<h2>' + a_class['name'] + '</h2>' +
         '<p><a class="btn btn-default" href="#" id="recipe-button1" role="button">View details &raquo;</a></p>');
 
-    $('#recipe-button1').on('click', function (a) {
-        showRecipe(1, a_class);
+    $('#recipe-button1').on('click', function () {
+        showRecipe(a_class);
     });
 
-    $('#recipe-image1').on('click', function (a) {
-        showRecipe(1, a_class);
+    $('#recipe-image1').on('click', function () {
+        showRecipe(a_class);
     });
 
-    $('#b-class1').append('<a href="' + b_class1['url'] + '" target="_blank">' +
-        '<img id="recipe-image2" class="loading img-circle backup_picture" src="/static/pictures/recipe_pic/' +
-        b_class1['name'] + '.jpg" width="150" height="150"></a>' +
+    $('#b-class1').append('<img id="recipe-image2" class="loading img-circle backup_picture" src="/static/pictures/recipe_pic/' +
+        b_class1['name'] + '.jpg" width="150" height="150">' +
         '<h4>' + b_class1['name'] + '</h4>' +
         '<p><a class="btn btn-default" href="#" id="recipe-button2" role="button">View details &raquo;</a></p>');
 
-    $('#recipe-button2').on('click', function (a) {
+    $('#recipe-button2').on('click', function () {
         showRecipe(b_class1);
     });
 
-    $('#recipe-image2').on('click', function (a) {
+    $('#recipe-image2').on('click', function () {
         showRecipe(b_class1)
     });
 
-    $('#b-class2').append('<a href="' + b_class2['url'] + '" target="_blank">' +
-        '<img id="recipe-image3" class="loading img-circle backup_picture" src="/static/pictures/recipe_pic/' +
-        b_class2['name'] + '.jpg" width="150" height="150"></a>' +
+    $('#b-class2').append('<img id="recipe-image3" class="loading img-circle backup_picture" src="/static/pictures/recipe_pic/' +
+        b_class2['name'] + '.jpg" width="150" height="150">' +
         '<h4>' + b_class2['name'] + '</h4>' +
         '<p><a class="btn btn-default" href="#" id="recipe-button3" role="button">View details &raquo;</a></p>');
 
-    $('#recipe-button3').on('click', function (a) {
+    $('#recipe-button3').on('click', function () {
         showRecipe(b_class2);
     });
 
-    $('#recipe-image3').on('click', function (a) {
+    $('#recipe-image3').on('click', function () {
         showRecipe(b_class2);
     });
 
@@ -372,21 +359,21 @@ function addRecipes(recipes) {
 
 }
 
-function displayRecipe(recipe) {
-
-    console.log(recipe);
-}
-
+/* Display recipe modal */
 function showRecipe(recipe) {
+    const modal = $('#recipeModal');
+    const modalBody = $('#recipeModalBody');
+
     $('#recipeModalTitle').text(recipe['name'].capitalize());
-    $('#recipeModalBody').empty();
-    $('#recipeModalBody').append(recipe['list_ingredients']);
-    $('#recipeModalBody').append(recipe['method']);
+    modalBody.empty();
+    modalBody.append(recipe['list_ingredients']);
+    modalBody.append(recipe['method']);
 
-    $('#recipeModal').modal({backdrop: 'static', keyboard: false});
-    $('#recipeModal').modal('show');
-    $('#recipeModal .recipe-ingredients__link').contents().unwrap();
-    $('#recipeModal .recipe-method__list').before('<h2 class="recipe-ingredients__heading">Method</h2>');
-
-
+    modal.modal({backdrop: 'static', keyboard: false});
+    modal.modal('show');
+    modal.find('.recipe-ingredients__link').contents().unwrap();
+    modal.find('.recipe-ingredients__glossary-link').contents().unwrap();
+    modal.find('.recipe-ingredients__glossary-element').remove();
+    modal.find('.node-glossary-item').remove();
+    modal.find('.recipe-method__list').before('<h2 class="recipe-ingredients__heading">Method</h2>');
 }
