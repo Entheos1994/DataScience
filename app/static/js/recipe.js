@@ -99,6 +99,13 @@ function findLocation() {
     $.ajax({
         type: 'POST',
         url: '/recipe',
+        beforeSend: function () {
+            $('.recipe-img').empty();
+            $("#loadingimg").show();
+        },
+        complete: function() {
+            $("#loadingimg").hide();
+        },
         data: {recipe_name: recipe},
         success: function (data) {
             addRecipes(data);
@@ -110,7 +117,6 @@ function findLocation() {
     /* Convert location into coordinates and retrieve restaurants */
     geocoder.geocode({'address': location}, function (results, status) {
         if (status == 'OK') {
-            console.log(results);
 
             var latitude = results[0].geometry.location.lat();
             var longitude = results[0].geometry.location.lng();
@@ -255,6 +261,7 @@ function addToList(place, marker) {
     var id = place.id;
     var phone = place['contact'].formattedPhone;
     var url = String(place.url);
+    var fullUrl = url;
     var formattedAddress = place['location'].formattedAddress;
 
     /* Don't display information if it doesn't exists */
@@ -277,6 +284,14 @@ function addToList(place, marker) {
 
     $('.list-group').append('<div><button class="list-group-item list-group-item-action restaurant-list" id="' + id + '"><h4>' + name
         + '</h4><p class="restaurant-info">' + address + '</p><p class="restaurant-info">' + url + '</p><p class="restaurant-info">' + phone + '</p></button></div>');
+
+    /* Open url with restaurant section */
+    if(url !== '') {
+        $('#' + id).bind('click', function () {
+            window.open(fullUrl, '_blank');
+        });
+    }
+
     $('#' + id).hover(function () {
         marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png')
     }, function () {
@@ -316,8 +331,8 @@ function addRecipes(recipes) {
 
     $('#a-class').append('<img id="recipe-image1" class="loading img-circle backup_picture"' +
         'src="/static/pictures/recipe_pic/' + a_class['name'] + '.jpg" width="200" height="200">' +
-        '<h2>' + a_class['name'] + '</h2>' +
-        '<p><a class="btn btn-default" href="#" id="recipe-button1" role="button">View details &raquo;</a></p>');
+        '<h2>' + a_class['name'].capitalize() + '</h2>' +
+        '<p><a class="btn btn-default" id="recipe-button1" role="button">View details &raquo;</a></p>');
 
     $('#recipe-button1').on('click', function () {
         showRecipe(a_class);
@@ -329,8 +344,8 @@ function addRecipes(recipes) {
 
     $('#b-class1').append('<img id="recipe-image2" class="loading img-circle backup_picture" src="/static/pictures/recipe_pic/' +
         b_class1['name'] + '.jpg" width="150" height="150">' +
-        '<h4>' + b_class1['name'] + '</h4>' +
-        '<p><a class="btn btn-default" href="#" id="recipe-button2" role="button">View details &raquo;</a></p>');
+        '<h4>' + b_class1['name'].capitalize() + '</h4>' +
+        '<p><a class="btn btn-default" id="recipe-button2" role="button">View details &raquo;</a></p>');
 
     $('#recipe-button2').on('click', function () {
         showRecipe(b_class1);
@@ -342,8 +357,8 @@ function addRecipes(recipes) {
 
     $('#b-class2').append('<img id="recipe-image3" class="loading img-circle backup_picture" src="/static/pictures/recipe_pic/' +
         b_class2['name'] + '.jpg" width="150" height="150">' +
-        '<h4>' + b_class2['name'] + '</h4>' +
-        '<p><a class="btn btn-default" href="#" id="recipe-button3" role="button">View details &raquo;</a></p>');
+        '<h4>' + b_class2['name'].capitalize() + '</h4>' +
+        '<p><a class="btn btn-default" id="recipe-button3" role="button">View details &raquo;</a></p>');
 
     $('#recipe-button3').on('click', function () {
         showRecipe(b_class2);
