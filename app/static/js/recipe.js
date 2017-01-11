@@ -65,6 +65,24 @@ restaurantIds['italian'] = '4bf58dd8d48988d110941735';
 
     $('.list-group-item').hover();
 
+    /* When ajax requests are being processed, display loading spinner to user */
+    $(document).ajaxStart(function () {
+        $('#tell-me-more').append(' <i id="spinner" class="fa fa-spinner fa-spin"></i>');
+    });
+
+    /* When finished scroll to recipes */
+    $(document).ajaxStop(function () {
+        var $anchor = $('#tell-me-more');
+        $anchor.attr('href', '#healthy-recipes');
+        $('html, body').stop().animate({
+
+            scrollTop: ($($anchor.attr('href')).offset().top - 50)
+        }, 1250, 'easeInOutExpo');
+        event.preventDefault();
+        $anchor.removeAttr('href');
+        $('#spinner').remove();
+    });
+
 })(jQuery); // End of use strict
 
 /**
@@ -99,13 +117,6 @@ function findLocation() {
     $.ajax({
         type: 'POST',
         url: '/recipe',
-        beforeSend: function () {
-            $('.recipe-img').empty();
-            $("#loadingimg").show();
-        },
-        complete: function() {
-            $("#loadingimg").hide();
-        },
         data: {recipe_name: recipe},
         success: function (data) {
             addRecipes(data);
@@ -286,7 +297,7 @@ function addToList(place, marker) {
         + '</h4><p class="restaurant-info">' + address + '</p><p class="restaurant-info">' + url + '</p><p class="restaurant-info">' + phone + '</p></button></div>');
 
     /* Open url with restaurant section */
-    if(url !== '') {
+    if (url !== '') {
         $('#' + id).bind('click', function () {
             window.open(fullUrl, '_blank');
         });
